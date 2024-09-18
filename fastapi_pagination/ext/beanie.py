@@ -42,7 +42,7 @@ async def paginate(  # noqa: C901
     if additional_data is None:
         additional_data = {}
 
-    cursor = raw_params.cursor  # type: ignore[attr-defined]
+    cursor = getattr(raw_params, "cursor", None)
     if isinstance(query, AggregationQuery):
         aggregation_query = query.clone()  # type: ignore
         paginate_data = []
