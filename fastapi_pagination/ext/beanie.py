@@ -144,10 +144,12 @@ async def paginate(  # noqa: C901
                         },
                     )
 
-            items = await query.limit(raw_params.size).to_list()  # type: ignore[attr-defined]
+            items = await query.limit(raw_params.size + 1).to_list()  # type: ignore[attr-defined]
+            next_link_available = items and len(items) >= raw_params.size  # type: ignore[attr-defined]
+            items = items[: raw_params.size]  # type: ignore[attr-defined]
             if cursor and cursor.startswith("prev_"):
                 items = list(reversed(items))
-            additional_data["next_"] = str(items[-1].id) if items else None
+            additional_data["next_"] = str(items[-1].id) if next_link_available else None
             additional_data["previous"] = f"prev_{items[0].id}" if items else None
 
     t_items = await apply_items_transformer(items, transformer, async_=True)
