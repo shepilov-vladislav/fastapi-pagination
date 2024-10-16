@@ -1,3 +1,4 @@
+import asyncio
 from typing import List
 
 from beanie import Document, init_beanie
@@ -32,6 +33,8 @@ def be_user():
 @async_fixture(scope="session")
 async def db_client(database_url, be_user):
     client = AsyncIOMotorClient(database_url)
+    # https://github.com/BeanieODM/beanie/issues/245#issuecomment-1107731762
+    client.get_io_loop = asyncio.get_event_loop
     await init_beanie(database=client.test, document_models=[be_user])
     yield
     client.close()
